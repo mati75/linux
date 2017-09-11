@@ -533,8 +533,6 @@ static long madvise_remove(struct vm_area_struct *vma,
 static int madvise_hwpoison(int bhv, unsigned long start, unsigned long end)
 {
 	struct page *p;
-	struct zone *zone;
-
 	if (!capable(CAP_SYS_ADMIN))
 		return -EPERM;
 	for (; start < end; start += PAGE_SIZE <<
@@ -563,11 +561,6 @@ static int madvise_hwpoison(int bhv, unsigned long start, unsigned long end)
 		if (ret)
 			return ret;
 	}
-
-	/* Ensure that all poisoned pages are removed from per-cpu lists */
-	for_each_populated_zone(zone)
-		drain_all_pages(zone);
-
 	return 0;
 }
 #endif
